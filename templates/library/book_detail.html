@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - Beder Library{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'book_list' %}">Librat</a></li>
+                <li class="breadcrumb-item active">{{ book.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Book Image -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if book.image %}
+                <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 500px;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="fas fa-book fa-5x text-muted"></i>
+                </div>
+            {% endif %}
+            <div class="card-body text-center">
+                <span class="badge {% if book.availability == 'available' %}bg-success{% elif book.availability == 'borrowed' %}bg-warning{% else %}bg-danger{% endif %} fs-6">
+                    {{ book.get_availability_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Details -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">{{ book.title }}</h2>
+                <div class="btn-group">
+                    <a href="{% url 'book_update' book.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edito
+                    </a>
+                    <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Fshi
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Autori</h6>
+                        <p class="fs-5">{{ book.author }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">ISBN</h6>
+                        <p class="fs-5">{{ book.isbn }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Kategoria</h6>
+                        <span class="badge bg-secondary fs-6">{{ book.get_category_display }}</span>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Gjuha</h6>
+                        <p>{{ book.language }}</p>
+                    </div>
+                    {% if book.publisher %}
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Shtëpia Botuese</h6>
+                        <p>{{ book.publisher }}</p>
+                    </div>
+                    {% endif %}
+                    {% if book.publication_date %}
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Data e Publikimit</h6>
+                        <p>{{ book.publication_date|date:"d/m/Y" }}</p>
+                    </div>
+                    {% endif %}
+                    {% if book.pages %}
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Numri i Faqeve</h6>
+                        <p>{{ book.pages }} faqe</p>
+                    </div>
+                    {% endif %}
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted">Shtuar më</h6>
+                        <p>{{ book.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                
+                {% if book.description %}
+                <hr>
+                <h6 class="text-muted">Përshkrimi</h6>
+                <p class="lead">{{ book.description|linebreaks }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-cogs"></i> Veprime
+                </h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'book_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Kthehu tek Lista
+                    </a>
+                    <a href="{% url 'book_update' book.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edito Librin
+                    </a>
+                    {% if book.availability == 'available' %}
+                        <button class="btn btn-success">
+                            <i class="fas fa-check"></i> Disponueshëm për Huazim
+                        </button>
+                    {% elif book.availability == 'borrowed' %}
+                        <button class="btn btn-warning">
+                            <i class="fas fa-hand-holding"></i> Aktualisht i Huazuar
+                        </button>
+                    {% endif %}
+                    <a href="{% url 'book_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Shto Libër tjetër
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

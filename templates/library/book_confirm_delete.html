@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Fshi Librin: {{ book.title }} - Beder Library{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'book_list' %}">Librat</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'book_detail' book.pk %}">{{ book.title }}</a></li>
+                <li class="breadcrumb-item active">Fshi</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-exclamation-triangle"></i> Konfirmo Fshirjen
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" alt="{{ book.title }}" class="img-thumbnail mb-3" style="max-height: 150px;">
+                    {% else %}
+                        <div class="bg-light p-4 mb-3 d-inline-block rounded">
+                            <i class="fas fa-book fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-warning"></i> Kujdes!
+                    </h5>
+                    <p class="mb-0">
+                        Je duke tentuar të fshish librin <strong>"{{ book.title }}"</strong> të autorit <strong>{{ book.author }}</strong>.
+                    </p>
+                    <hr>
+                    <p class="mb-0">
+                        <small><strong>Kjo veprim nuk mund të zhbëhet!</strong> Të gjitha të dhënat e këtij libri do të humbin përgjithmonë.</small>
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mb-2">
+                        <strong>Titulli:</strong> {{ book.title }}
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>Autori:</strong> {{ book.author }}
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>ISBN:</strong> {{ book.isbn }}
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>Kategoria:</strong> {{ book.get_category_display }}
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>Disponueshmëria:</strong> 
+                        <span class="badge {% if book.availability == 'available' %}bg-success{% elif book.availability == 'borrowed' %}bg-warning{% else %}bg-danger{% endif %}">
+                            {{ book.get_availability_display }}
+                        </span>
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>Shtuar më:</strong> {{ book.created_at|date:"d/m/Y" }}
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Anulo
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Po, Fshi Librin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add confirmation dialog for extra safety
+    const deleteForm = document.querySelector('form');
+    deleteForm.addEventListener('submit', function(e) {
+        if (!confirm('A je i sigurt që dëshiron të fshish këtë libër? Ky veprim nuk mund të zhbëhet!')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

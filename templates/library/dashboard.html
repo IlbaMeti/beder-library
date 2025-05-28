@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Beder Library{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h2 mb-4">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Totali i Librave</h5>
+                        <h2>{{ total_books }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-books fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Libra të Disponueshëm</h5>
+                        <h2>{{ available_books }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Libra të Huazuar</h5>
+                        <h2>{{ borrowed_books }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-hand-holding fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Kategoritë</h5>
+                        <h2>{{ categories_count }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-tags fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt"></i> Veprime të Shpejta
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{% url 'book_create' %}" class="btn btn-primary me-md-2">
+                        <i class="fas fa-plus"></i> Shto Libër të Ri
+                    </a>
+                    <a href="{% url 'book_list' %}" class="btn btn-outline-primary me-md-2">
+                        <i class="fas fa-list"></i> Shiko Të Gjithë Librat
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Books -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock"></i> Librat e Fundit të Shtuar
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_books %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Titulli</th>
+                                    <th>Autori</th>
+                                    <th>Kategoria</th>
+                                    <th>Disponueshmëria</th>
+                                    <th>Veprime</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for book in recent_books %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ book.title }}</strong>
+                                    </td>
+                                    <td>{{ book.author }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ book.get_category_display }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if book.availability == 'available' %}bg-success{% elif book.availability == 'borrowed' %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {{ book.get_availability_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Detajet
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nuk ka libra të shtuar ende.</p>
+                        <a href="{% url 'book_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Shto Librin e Parë
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
